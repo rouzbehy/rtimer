@@ -1,0 +1,6 @@
+# dune build stuff
+_build/
+
+# MacOS stuff
+.DS_Store
+
