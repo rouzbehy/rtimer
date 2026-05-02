@@ -32,21 +32,10 @@ let parse_arguments () =
     let tvalue = int_of_string _time_value in
     let time_unit = string_to_timeunit _time_unit in
     let initial_seconds = get_time_in_seconds tvalue time_unit in
-    { remaining_seconds = initial_seconds; current_mode = initial_mode; is_active = true }
+    { maximum_seconds = initial_seconds
+    ; remaining_seconds = initial_seconds
+    ; current_mode = initial_mode
+    ; is_active = true
+    }
   | _ -> failwith "Invalid argument structure. Use 'help' for more information."
 ;;
-
-(* let read_arguments () :string = "";
-
-   let take_input () =
-   print_endline
-   "Input the configurations of the run: MODE [work or rest] time unit [seconds or \
-     minutes]. Use single space as delimiter."
-   let input = read_line () in
-   match String.split_on_char ' ' input with
-   | [mode_label; num_str; unit_label] ->
-   let mode = string_to_mode mode_label
-
-   | _ -> failwith "Invalid input format. "
-   ;;
-*)
