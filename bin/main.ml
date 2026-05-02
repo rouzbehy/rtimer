@@ -1,27 +1,45 @@
 open Rtimer.Pomodoro
 open Rtimer.Utils
 open Rtimer.Arguments
-(*
-   let state = {remaining_seconds=5; is_active=false; current_mode=WORK}
-let () = print_endline (print_state state);
-*)
+open Rtimer.Coloring
+open Rtimer.Progressbar
 
 let rec primary_loop (s : Rtimer.Pomodoro.state) =
   match s.is_active with
-  | false -> print_in_situ "Timer is finished!"
+  | false ->
+    let final_theme =
+      match s.current_mode with
+      | WORK -> get_theme FOCUS
+      | IDLE -> get_theme RELAX
+      | HOBBY -> get_theme CREATIVE
+    in
+    print_progress_bar s.maximum_seconds s.maximum_seconds final_theme ();
+    print_newline ();
+    print_in_situ "Timer is Finished!\n"
   | true ->
-    print_in_situ (state_to_string s);
+    let theme_pair =
+      match s.current_mode with
+      | WORK -> get_theme FOCUS
+      | IDLE -> get_theme RELAX
+      | HOBBY -> get_theme CREATIVE
+    in
+    let elapsed = s.maximum_seconds - s.remaining_seconds in
+    print_progress_bar elapsed s.maximum_seconds theme_pair ();
     Unix.sleep 1;
     primary_loop (step s)
 ;;
 
 let () =
-  let state = parse_arguments () in
-  state |> state_to_string |> print_in_situ
+  try
+    let given_state = parse_arguments () in
+    print_time_banner "Start";
+    primary_loop given_state;
+    print_time_banner "End"
+  with
+  | Failure msg ->
+    print_endline ("Error: " ^ msg);
+    exit 1
+  | _ ->
+    print_endline "An unexpected error occurred.";
+    exit 1
 ;;
-(* let mode = int_to_mode (get_mode_as_int ()) in
-  let initial_state = { remaining_seconds = 5; current_mode = mode; is_active = true } in
-  print_time_banner "start";
-  primary_loop initial_state;
-  print_endline "";
-  print_time_banner "stop" *)
