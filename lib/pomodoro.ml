@@ -1,9 +1,11 @@
 type mode =
   | WORK
   | IDLE
+  | HOBBY
 
 type state =
-  { remaining_seconds : int
+  { maximum_seconds : int
+  ; remaining_seconds : int
   ; current_mode : mode
   ; is_active : bool
   }
@@ -32,6 +34,7 @@ let transition (s : state) : state =
 let string_of_mode = function
   | WORK -> "Work"
   | IDLE -> "Break"
+  | HOBBY -> "Hobby"
 ;;
 
 let state_to_string (s : state) : string =
@@ -50,13 +53,17 @@ let step (s : state) : state = s |> tick |> transition
 let int_to_mode (v : int) =
   match v with
   | 1 -> WORK
-  | 2 -> IDLE
-  | _ -> failwith (Printf.sprintf "Invalid mode: %d. Expected 1 (WORK) or 2 (IDLE)." v)
+  | 2 -> HOBBY
+  | 3 -> IDLE
+  | _ ->
+    failwith
+      (Printf.sprintf "Invalid mode: %d. Choose from [1] WORK, [2] HOBBY or [3] IDLE." v)
 ;;
 
 let string_to_mode (v : string) =
   match String.lowercase_ascii v with
   | "work" -> WORK
+  | "hobby" | "fun" -> HOBBY
   | "idle" -> IDLE
   | "rest" -> IDLE
   | _ -> failwith (Printf.sprintf "Value %s did not match either WORK or IDLE modes." v)
