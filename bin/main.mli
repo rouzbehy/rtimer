@@ -1,1 +1,1 @@
-val primary_loop : Rtimer.Pomodoro.state -> unit
+val primary_loop : Rtimer.Pomodoro.session -> unit

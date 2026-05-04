@@ -3,15 +3,15 @@ type mode =
   | IDLE
   | HOBBY
 
-type state =
+type session =
   { maximum_seconds : int
   ; remaining_seconds : int
   ; current_mode : mode
   ; is_active : bool
   }
 
-(* function that ticks the time, takes a state, returns a state*)
-let tick (s : state) : state =
+(* function that ticks the time, takes a session, returns a session*)
+let tick (s : session) : session =
   match s.is_active, s.remaining_seconds with
   | false, 0 -> s
   | false, _ -> s
@@ -19,8 +19,8 @@ let tick (s : state) : state =
   | true, _ -> { s with remaining_seconds = s.remaining_seconds - 1 }
 ;;
 
-(* transition the state *)
-let transition (s : state) : state =
+(* transition the session *)
+let transition (s : session) : session =
   match s.current_mode, s.remaining_seconds, s.is_active with
   | WORK, 0, true -> { s with is_active = false; current_mode = IDLE }
   | WORK, 0, false -> { s with current_mode = IDLE }
@@ -37,7 +37,7 @@ let string_of_mode = function
   | HOBBY -> "Hobby"
 ;;
 
-let state_to_string (s : state) : string =
+let session_to_string (s : session) : string =
   let minutes = s.remaining_seconds / 60 in
   let seconds = s.remaining_seconds mod 60 in
   Printf.sprintf
@@ -48,7 +48,7 @@ let state_to_string (s : state) : string =
     s.is_active
 ;;
 
-let step (s : state) : state = s |> tick |> transition
+let take_a_step (s : session) : session = s |> tick |> transition
 
 let int_to_mode (v : int) =
   match v with
