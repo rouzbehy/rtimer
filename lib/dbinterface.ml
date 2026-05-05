@@ -59,4 +59,11 @@ let record_session (database : db) (s : session) =
 ;;
 
 let close_database (database : db) () = ignore (db_close database)
-let delete_session () = ()
+
+let truncate_table (database : db) () =
+  let sql_command = "TRUNCATE time_sessions;" in
+  let statement = prepare database sql_command in
+  match step statement with
+  | Rc.DONE -> ignore (finalize statement)
+  | _ -> failwith "Failed to truncate the session."
+;;
