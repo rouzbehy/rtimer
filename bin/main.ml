@@ -16,6 +16,7 @@ let rec primary_loop (s : Rtimer.Pomodoro.session) =
     in
     print_progress_bar s.maximum_seconds s.maximum_seconds final_theme ();
     print_newline ();
+    alert ();
     print_in_situ "Timer is Finished!\n"
   | true ->
     let theme_pair =
