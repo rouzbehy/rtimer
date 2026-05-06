@@ -9,9 +9,9 @@ type theme =
   | CREATIVE
 
 let get_theme = function
-  | FOCUS -> { start_colour = "#007CF0"; stop_colour = "#00DFD8" }
-  | RELAX -> { start_colour = "#054f38"; stop_colour = "#6142a1" }
-  | CREATIVE -> { start_colour = "#edc93a"; stop_colour = "#fc04ce" }
+  | FOCUS -> { start_colour = "#06447eef"; stop_colour = "#e1f90c" }
+  | RELAX -> { start_colour = "#3f0d58"; stop_colour = "#3f0d58" }
+  | CREATIVE -> { start_colour = "#edc93a"; stop_colour = "#467777" }
 ;;
 
 let hex_to_rgb hex =
