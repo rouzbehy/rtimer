@@ -6,27 +6,24 @@ open Rtimer.Progressbar
 open Rtimer.Dbinterface
 
 let rec primary_loop (s : Rtimer.Pomodoro.session) =
+  let bar_theme =
+    match s.current_mode with
+    | WORK -> get_theme FOCUS
+    | IDLE -> get_theme RELAX
+    | HOBBY -> get_theme CREATIVE
+  in
   match s.is_active with
   | false ->
-    let final_theme =
-      match s.current_mode with
-      | WORK -> get_theme FOCUS
-      | IDLE -> get_theme RELAX
-      | HOBBY -> get_theme CREATIVE
-    in
-    print_progress_bar s.maximum_seconds s.maximum_seconds final_theme ();
+    print_progress_bar s.maximum_seconds s.maximum_seconds bar_theme ();
     print_newline ();
-    alert ();
-    print_in_situ "Timer is Finished!\n"
-  | true ->
-    let theme_pair =
-      match s.current_mode with
-      | WORK -> get_theme FOCUS
-      | IDLE -> get_theme RELAX
-      | HOBBY -> get_theme CREATIVE
+    let message =
+      Printf.sprintf "\tTimer for %s Finished!\n" (string_of_mode s.current_mode)
     in
+    alert message;
+    print_in_situ message
+  | true ->
     let elapsed = s.maximum_seconds - s.remaining_seconds in
-    print_progress_bar elapsed s.maximum_seconds theme_pair ();
+    print_progress_bar elapsed s.maximum_seconds bar_theme ();
     Unix.sleep 1;
     primary_loop (take_a_step s)
 ;;
