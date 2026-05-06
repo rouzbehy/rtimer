@@ -52,13 +52,27 @@ let get_os_name () =
   | s -> Other s
 ;;
 
-let alert () =
+(*reads a pre-saved JavaScript file and replaces the placeholder message
+  with the provided message.*)
+let js_template =
+  {|
+var app = Application('System Events');
+app.includeStandardAdditions = true;
+app.displayDialog("PROMPT", {withTitle:"RTimer", buttons:["OK"], defaultButton:"OK"});
+|}
+;;
+
+let alert message =
   let name = get_os_name () in
   match name with
   | MacOS ->
-    ignore
-      (Sys.command
-         "osascript -e 'tell application \"System Events\" to display dialog \"Timer is \
-          Finished!\" with title \"RTimer\" buttons {\"OK\"} default button \"OK\"'")
+    let payload =
+      Str.global_replace (Str.regexp_string "PROMPT") message js_template
+      |> Str.global_replace (Str.regexp "\n") " "
+    in
+    let command =
+      Printf.sprintf "osascript -l JavaScript -e %s" (Filename.quote payload)
+    in
+    ignore (Sys.command command)
   | _ -> ()
 ;;
